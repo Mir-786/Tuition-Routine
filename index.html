@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#145c4b">
+<title>Class Routine Manager</title>
+<style>
+:root{--green:#145c4b;--green2:#1d8068;--ink:#172b26;--muted:#6b7c76;--line:#e3ebe7;--bg:#f4f7f5;--white:#fff;--shadow:0 12px 35px #163c2d12}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif}
+button,input,select{font:inherit}button{cursor:pointer;border:0}
+.topbar{height:66px;background:var(--green);color:#fff;display:flex;align-items:center;padding:0 22px;gap:16px;position:sticky;top:0;z-index:5;box-shadow:0 4px 15px #102c241c}
+.menu-btn{background:#ffffff20;color:#fff;border-radius:11px;width:40px;height:40px;font-size:22px}.brand{font-weight:750;font-size:18px;letter-spacing:.2px}.brand small{display:block;font-size:10px;font-weight:500;opacity:.75;letter-spacing:1.5px;text-transform:uppercase}.top-right{margin-left:auto;font-size:12px;opacity:.85}
+.layout{display:flex;min-height:calc(100vh - 66px)}.sidebar{width:255px;background:#fff;border-right:1px solid var(--line);padding:22px 15px;transition:margin .25s;flex-shrink:0}.sidebar.closed{margin-left:-255px}.side-label{font-size:10px;color:#94a39d;font-weight:800;letter-spacing:1.5px;padding:10px 12px}.nav-btn{width:100%;display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;background:transparent;color:#49615a;text-align:left;margin:3px 0;font-weight:600}.nav-btn:hover,.nav-btn.active{background:#eaf4f0;color:var(--green)}.nav-btn span{font-size:18px;width:22px;text-align:center}.sidebar-note{margin:28px 8px 0;padding:14px;background:#f2f7f4;border-radius:12px;color:var(--muted);font-size:12px;line-height:1.5}
+main{padding:28px;max-width:1500px;width:100%;margin:auto}.page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:24px}.eyebrow{color:var(--green2);font-size:11px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase}.page-head h1{margin:5px 0 5px;font-size:27px}.sub{margin:0;color:var(--muted);font-size:13px}.actions{display:flex;gap:9px;flex-wrap:wrap}.btn{padding:10px 15px;border-radius:9px;font-weight:700;font-size:13px}.primary{background:var(--green);color:#fff}.primary:hover{background:var(--green2)}.light{background:#e9f1ed;color:var(--green)}.outline{background:#fff;border:1px solid var(--line);color:#435a52}.danger{background:#fff0ef;color:#b53b35}
+.panel{background:#fff;border:1px solid var(--line);border-radius:15px;padding:20px;box-shadow:var(--shadow);margin-bottom:20px}.panel-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.panel-title h2{font-size:16px;margin:0}.muted{color:var(--muted);font-size:12px}
+.class-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:12px}.class-card{padding:17px 15px;background:#fff;border:1px solid var(--line);border-radius:12px;text-align:left;transition:.18s}.class-card:hover{border-color:#8eb8a8;transform:translateY(-2px);box-shadow:var(--shadow)}.class-card.selected{background:#eaf4f0;border:1.5px solid var(--green2)}.class-card strong{display:block;font-size:16px}.class-card small{display:block;color:var(--muted);margin-top:5px;font-size:11px}
+.routine-wrap{overflow-x:auto}.routine{width:100%;border-collapse:separate;border-spacing:0;min-width:760px;font-size:12px}.routine th{background:#edf4f0;color:#36574b;font-size:11px;text-transform:uppercase;letter-spacing:.5px;padding:13px 10px;border-bottom:1px solid var(--line)}.routine th:first-child{border-radius:9px 0 0 0}.routine th:last-child{border-radius:0 9px 0 0}.routine td{padding:11px 9px;text-align:center;border-bottom:1px solid #edf1ef;border-right:1px solid #f0f3f1;min-width:105px}.routine td:first-child{font-weight:800;color:var(--green);background:#f8faf9;min-width:105px}.routine-simple{min-width:0;width:100%;border-collapse:collapse;border-spacing:0;border:1.5px solid #42534b}.routine-columns{table-layout:fixed}.routine-columns th:first-child,.routine-columns td:first-child{width:18%;text-align:center;vertical-align:middle}.routine-columns th:not(:first-child),.routine-columns td:not(:first-child){width:auto;text-align:center}.routine-columns tr.today-row td{background:#e4f6e9!important;border-top:2px solid #239653!important;border-bottom:2px solid #239653!important}.routine-columns tr.today-row td:first-child{background:#c9efd5!important;color:#126b37!important;font-weight:900}.today-label{display:inline-block;margin-left:7px;padding:2px 6px;border-radius:10px;background:#168348;color:#fff;font-size:10px;font-weight:800;vertical-align:middle}.routine-simple th,.routine-simple td{border:1px solid #718078!important;text-align:left}.routine-simple th{padding:13px 14px}.routine-simple td{padding:18px 14px;text-align:left;vertical-align:middle}.routine-simple td:first-child{width:25%;white-space:nowrap}.routine-simple tr{height:62px}.subject-chip{display:inline-block;margin:3px 10px 3px 0;padding:5px 10px;background:#edf5f0;border-radius:6px;color:#29483d;font-weight:700}.tuition-off{color:#d32626!important;font-weight:900!important;font-size:16px;background:#fff0f0!important}.routine tr:last-child td{border-bottom:0}.subject{font-weight:700;color:#29483d}.teacher{font-size:10px;color:#83928c;margin-top:3px}.break-cell{background:#fff8e9;color:#9a6b1e;font-weight:700;letter-spacing:1px}.off-cell{background:#f1f2f4;color:#68727d;font-weight:800;letter-spacing:1px}
+.empty{padding:38px 15px;text-align:center;color:var(--muted);border:1px dashed #ccd9d2;border-radius:12px}.empty b{display:block;color:#39564c;margin-bottom:6px}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.subject-picker{display:flex;gap:8px}.subject-picker select{flex:1;min-width:0;padding:10px 11px;border:1px solid #dce6e0;border-radius:8px;background:#fff}.custom-subject{margin-top:8px}.selected-subjects{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;min-height:28px}.selected-subject{display:inline-flex;align-items:center;gap:7px;background:#eaf4f0;color:#245b49;border-radius:20px;padding:6px 10px;font-size:12px;font-weight:700}.selected-subject button{background:transparent;color:#245b49;font-size:15px;padding:0}.holiday-toggle{display:flex!important;align-items:center;gap:8px;margin-top:14px!important;color:#c62828!important}.holiday-toggle input{width:auto}.field label{display:block;font-size:11px;font-weight:800;color:#53675f;margin-bottom:6px}.field input,.field select{width:100%;padding:10px 11px;border:1px solid #dce6e0;border-radius:8px;background:#fff;color:var(--ink);outline:none}.field input:focus,.field select:focus{border-color:var(--green2);box-shadow:0 0 0 3px #1d80681a}.form-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:15px}.entry-list{display:flex;flex-direction:column;gap:8px}.entry{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:9px;font-size:12px}.entry strong{flex:1}.entry small{color:var(--muted)}
+.hidden{display:none!important}.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#183d31;color:#fff;padding:11px 17px;border-radius:9px;font-size:13px;box-shadow:var(--shadow);z-index:20;opacity:0;pointer-events:none;transition:.2s}.toast.show{opacity:1}
+.modal-backdrop{position:fixed;inset:0;background:#10231dcc;display:flex;align-items:center;justify-content:center;padding:15px;z-index:15}.modal{background:#fff;width:min(560px,100%);max-height:90vh;overflow:auto;border-radius:16px;padding:22px;box-shadow:0 20px 60px #0003}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.modal-head h2{margin:0;font-size:18px}.close{background:#f0f4f1;border-radius:8px;width:32px;height:32px;font-size:18px}
+@media(max-width:760px){.sidebar{position:fixed;top:66px;bottom:0;z-index:8;box-shadow:10px 0 30px #102c2414}.sidebar.closed{margin-left:-255px}main{padding:20px 14px}.page-head{display:block}.actions{margin-top:15px}.page-head h1{font-size:23px}.top-right{display:none}.panel{padding:15px}.form-grid{grid-template-columns:1fr}}
+@page{size:A4 landscape;margin:5mm}
+
+@media print{
+.routine-columns tr.today-row td,
+.routine-columns tr.today-row td:first-child{
+  background:transparent!important;
+  color:inherit!important;
+  border-top:1px solid #222!important;
+  border-bottom:1px solid #222!important;
+  -webkit-print-color-adjust:economy!important;
+  print-color-adjust:economy!important;
+}
+.routine-columns tr.today-row .today-label{display:none!important}
+}
+
+@media print{
+ body{background:#fff!important;color:#111}.topbar,.sidebar,.no-print,.page-head .actions,.class-grid,.panel:not(.print-panel){display:none!important}
+ .layout{display:block;min-height:0}main{padding:0;max-width:none;width:100%}.page-head{margin:0 0 5mm;display:block}.page-head h1{font-size:20px;margin:3px 0}.eyebrow{font-size:9px}.sub{font-size:10px}
+ .print-panel{display:block!important;border:0;box-shadow:none;padding:0;margin:0;width:100%;height:188mm;min-height:188mm}.panel-title{margin-bottom:3mm}.panel-title h2{font-size:13px}
+ .routine-wrap{overflow:visible;width:100%;height:178mm}.routine{min-width:0;width:100%;font-size:12px;page-break-inside:avoid;table-layout:fixed}.routine th{background:#e8eee9!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:9px 5px}.routine td{padding:8px 4px;min-width:0}.routine-simple{height:178mm;border:1.5px solid #222!important;border-collapse:collapse!important;border-spacing:0!important}.routine-columns{table-layout:fixed}.routine-columns th:first-child,.routine-columns td:first-child{width:18%;text-align:center;vertical-align:middle}.routine-columns th:not(:first-child),.routine-columns td:not(:first-child){text-align:center}.routine-columns tr.today-row td{background:#e4f6e9!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;border-top:2px solid #239653!important;border-bottom:2px solid #239653!important}.routine-columns tr.today-row td:first-child{background:#c9efd5!important;color:#126b37!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.routine-simple thead{height:15mm}.routine-simple tbody{height:163mm}.routine-simple th,.routine-simple td{border:1px solid #333!important}.routine-simple th{font-size:14px;padding:10px 14px}.routine-simple td{padding:14px;font-size:14px;vertical-align:middle}.routine-simple td:first-child{background:#f1f3f2!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;width:25%}.subject-chip{font-size:14px;margin:4px 10px 4px 0;padding:4px 8px}.break-cell{background:#fff8e9!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.off-cell{background:#f1f2f4!important;color:#68727d!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.tuition-off{color:#d32626!important;background:#fff0f0!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.subject-chip{background:#edf5f0!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.subject{font-size:10px}.teacher{font-size:8px}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+ <button class="menu-btn" id="menuToggle" aria-label="Toggle menu">☰</button>
+ <div class="brand">Routine Manager <small>Class-wise timetable</small></div>
+ <div class="top-right">Plan • Organise • Teach</div>
+</header>
+<div class="layout">
+ <aside class="sidebar" id="sidebar">
+  <div class="side-label">WORKSPACE</div>
+  <button class="nav-btn active" data-page="view"><span>▦</span> View routines</button>
+  <button class="nav-btn" data-page="edit"><span>✎</span> Edit routine</button>
+  <button class="nav-btn" data-page="classes"><span>▤</span> Manage classes</button>
+  <button class="nav-btn" data-page="supabase"><span>☁</span> Supabase Connect</button>
+  <div class="sidebar-note" id="sidebarSyncNote">Local save enabled. Connect Supabase to sync across devices.</div>
+ </aside>
+ <main>
+  <section id="viewPage">
+   <div class="page-head"><div><div class="eyebrow">Timetable overview</div><h1>Class routines</h1><p class="sub">Choose a class below to view its weekly routine.</p></div><div class="actions no-print"><button class="btn outline" id="goEdit">✎ Edit routine</button><button class="btn primary" id="printBtn">↧ Print routine</button></div></div>
+   <div class="panel no-print"><div class="panel-title"><h2>Select a class</h2><span class="muted" id="classCount"></span></div><div class="class-grid" id="classGrid"></div></div>
+   <div class="panel print-panel"><div class="panel-title"><h2 id="routineTitle">Select a class</h2><span class="muted" id="routineMeta"></span></div><div id="routineContent"></div></div>
+  </section>
+  <section id="editPage" class="hidden">
+   <div class="page-head"><div><div class="eyebrow">Routine editor</div><h1>Edit routine</h1><p class="sub">Add, update or remove each day's subjects for a class.</p></div><div class="actions"><button class="btn light" id="backView">View routine</button></div></div>
+   <div class="panel"><div class="panel-title"><h2>Choose class</h2><span class="muted">Select where you want to make changes</span></div><div class="field"><select id="editClass"></select></div></div>
+   <div class="panel"><div class="panel-title"><h2 id="editorTitle">Add routine</h2><span class="muted">Add subjects for each day, separated by |</span></div>
+    <form id="periodForm"><input type="hidden" id="periodId"><div class="form-grid">
+     <div class="field"><label>DAY</label><select id="day" required><option>সোমবার</option><option>মঙ্গলবার</option><option>বুধবার</option><option>বৃহস্পতিবার</option><option>শুক্রবার</option><option>শনিবার</option><option>রবিবার</option></select></div>
+     <div class="field"><label>SUBJECT DROPDOWN</label><div class="subject-picker"><select id="subjectSelect"><option value="">বিষয় নির্বাচন করুন</option><option>ইংরেজি</option><option>বাংলা</option><option>অঙ্ক</option><option>বিজ্ঞান</option><option>জিকে</option><option>ভূগোল</option><option>ইতিহাস</option><option>জীবন বিজ্ঞান</option><option>ভৌত বিজ্ঞান</option><option>কম্পিউটার</option><option>অঙ্কন</option><option>শারীরশিক্ষা</option><option value="__custom">অন্যান্য বিষয়...</option></select><button type="button" class="btn light" id="addSubject">+ Add</button></div><input id="customSubject" class="custom-subject hidden" placeholder="বিষয়ের নাম লিখুন"><div id="selectedSubjects" class="selected-subjects"><span class="muted">এখনও কোনো বিষয় যোগ করা হয়নি</span></div><label class="holiday-toggle"><input type="checkbox" id="holidayToggle"> এই দিনটি ছুটি (টিউশন ছুটি)</label></div>
+    </div><div class="form-actions"><button type="button" class="btn outline" id="cancelEdit">Clear</button><button class="btn primary" type="submit">Save routine</button></div></form>
+   </div>
+   <div class="panel"><div class="panel-title"><h2>Periods in selected class</h2><span class="muted" id="periodCount"></span></div><div class="entry-list" id="periodList"></div></div>
+  </section>
+  <section id="classesPage" class="hidden">
+   <div class="page-head"><div><div class="eyebrow">Class settings</div><h1>Manage classes</h1><p class="sub">Add a class or remove one you no longer need.</p></div></div>
+   <div class="panel"><div class="panel-title"><h2>Add new class</h2></div><form id="classForm" class="form-grid"><div class="field"><label>CLASS NAME</label><input id="newClass" placeholder="e.g. Class VII" required></div><div class="field" style="display:flex;align-items:end"><button class="btn primary" style="width:100%">+ Add class</button></div></form></div>
+   <div class="panel"><div class="panel-title"><h2>Your classes</h2><span class="muted" id="manageClassCount"></span></div><div class="entry-list" id="manageClassList"></div></div>
+  </section>
+  <section id="supabasePage" class="hidden">
+   <div class="page-head"><div><div class="eyebrow">Cloud database</div><h1>Supabase Connect</h1><p class="sub">Connect this routine app to your Supabase project to sync classes and routines across devices.</p></div></div>
+   <div class="panel">
+    <div class="panel-title"><h2>Project connection</h2><span class="muted" id="supabaseStatus">Not connected</span></div>
+    <div class="form-grid">
+     <div class="field"><label>SUPABASE PROJECT URL</label><input id="supabaseUrl" type="url" placeholder="https://your-project.supabase.co" autocomplete="url"></div>
+     <div class="field"><label>SUPABASE ANON / PUBLISHABLE KEY</label><input id="supabaseKey" type="password" placeholder="Paste your anon / publishable key" autocomplete="off"></div>
+    </div>
+    <div class="form-actions" style="margin-top:16px">
+     <button class="btn primary" id="connectSupabase">Connect & Sync</button>
+     <button class="btn light" id="syncSupabase" type="button">Sync now</button>
+     <button class="btn danger" id="disconnectSupabase" type="button">Disconnect</button>
+    </div>
+    <p class="muted" id="syncMessage" style="margin-top:12px">Your data remains saved locally even when Supabase is disconnected.</p>
+   </div>
+   <div class="panel">
+    <div class="panel-title"><h2>One-time database setup</h2><span class="muted">Run this SQL in Supabase → SQL Editor</span></div>
+    <textarea id="supabaseSql" rows="9" readonly style="width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font:12px/1.5 monospace">create table if not exists public.tuition_routine_data (
+  id text primary key,
+  payload jsonb not null,
+  updated_at timestamptz not null default now()
+);
+alter table public.tuition_routine_data enable row level security;
+create policy "Allow routine app access" on public.tuition_routine_data
+  for all to anon using (true) with check (true);</textarea>
+    <div class="form-actions" style="margin-top:10px"><button class="btn outline" id="copySupabaseSql" type="button">Copy SQL</button></div>
+    <p class="muted" style="margin-top:10px">For a private production app, enable Supabase Auth and replace the public anon policies with user-specific access rules. Never use a service_role or secret key in this HTML file.</p>
+   </div>
+  </section>
+ </main>
+</div>
+<div class="toast" id="toast"></div>
+<div class="modal-backdrop hidden" id="confirmModal"><div class="modal"><div class="modal-head"><h2>Delete class?</h2><button class="close" id="modalClose">×</button></div><p class="muted">This will also remove all routine periods saved for this class.</p><div class="form-actions"><button class="btn outline" id="modalCancel">Cancel</button><button class="btn danger" id="modalDelete">Delete class</button></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const DAYS=['সোমবার','মঙ্গলবার','বুধবার','বৃহস্পতিবার','শুক্রবার','শনিবার','রবিবার'];
+const DEFAULT_CLASSES=['Class V','Class VI','Class VII','Class VIII','Class IX','Class X'];
+const STORE='routineManagerData_v1';
+let data=loadData(), selectedClass=data.classes[0]||'', pendingDelete='';
+function loadData(){try{const d=JSON.parse(localStorage.getItem(STORE));if(d&&Array.isArray(d.classes)&&d.routines)return d}catch(e){}return{classes:DEFAULT_CLASSES,routines:{}}}
+const SUPABASE_CONFIG_KEY='routineSupabaseConfig_v1';
+let supabaseClient=null, realtimeChannel=null, cloudBusy=false, cloudSaveTimer=null;
+function save(){
+ localStorage.setItem(STORE,JSON.stringify(data));
+ if(supabaseClient){
+  clearTimeout(cloudSaveTimer);
+  cloudSaveTimer=setTimeout(()=>pushCloudData(),500);
+ }
+}
+function setSyncStatus(text,isConnected=false){
+ const status=document.getElementById('supabaseStatus');
+ const msg=document.getElementById('syncMessage');
+ const note=document.getElementById('sidebarSyncNote');
+ if(status){status.textContent=text;status.style.color=isConnected?'#168348':'#b7791f'}
+ if(msg)msg.textContent=text;
+ if(note)note.textContent=isConnected?'Supabase connected • Cloud sync enabled':'Local save enabled. Connect Supabase to sync across devices.';
+}
+function loadSupabaseSettings(){
+ let cfg={};try{cfg=JSON.parse(localStorage.getItem(SUPABASE_CONFIG_KEY)||'{}')}catch(e){}
+ document.getElementById('supabaseUrl').value=cfg.url||'';
+ document.getElementById('supabaseKey').value=cfg.key||'';
+ setSyncStatus(supabaseClient?'Connected • Cloud sync enabled':'Not connected',!!supabaseClient);
+}
+async function connectSupabase(){
+ const url=document.getElementById('supabaseUrl').value.trim().replace(/\/$/,'');
+ const key=document.getElementById('supabaseKey').value.trim();
+ if(!url||!key)return toast('Project URL ও anon key দিন');
+ if(!window.supabase?.createClient)return toast('Supabase library load হয়নি। Internet connection পরীক্ষা করুন।');
+ try{
+  setSyncStatus('Connecting…');
+  const client=window.supabase.createClient(url,key);
+  const {data:remote,error}=await client.from('tuition_routine_data').select('payload').eq('id','main').maybeSingle();
+  if(error)throw error;
+  supabaseClient=client;
+  localStorage.setItem(SUPABASE_CONFIG_KEY,JSON.stringify({url,key}));
+  if(remote?.payload&&Array.isArray(remote.payload.classes)&&remote.payload.routines){
+   data=remote.payload;
+   selectedClass=data.classes[0]||'';
+   localStorage.setItem(STORE,JSON.stringify(data));
+   renderView();renderEditor();renderClasses();
+   toast('Cloud routine loaded');
+  }else{
+   await pushCloudData();
+   toast('Local routine uploaded to Supabase');
+  }
+  subscribeRealtime();
+  setSyncStatus('Connected • Cloud sync enabled',true);
+ }catch(err){
+  supabaseClient=null;
+  setSyncStatus('Connection failed: '+(err.message||'Unknown error'));
+  toast('Supabase connection failed');
+ }
+}
+async function pushCloudData(){
+ if(!supabaseClient||cloudBusy)return;
+ cloudBusy=true;
+ try{
+  const {error}=await supabaseClient.from('tuition_routine_data').upsert({id:'main',payload:data,updated_at:new Date().toISOString()},{onConflict:'id'});
+  if(error)throw error;
+  setSyncStatus('Connected • Last synced '+new Date().toLocaleTimeString(),true);
+ }catch(err){setSyncStatus('Sync error: '+(err.message||'Unknown error'))}
+ finally{cloudBusy=false}
+}
+async function syncCloudNow(){
+ if(!supabaseClient)return toast('আগে Supabase connect করুন');
+ try{
+  const {data:remote,error}=await supabaseClient.from('tuition_routine_data').select('payload').eq('id','main').maybeSingle();
+  if(error)throw error;
+  if(remote?.payload){data=remote.payload;selectedClass=data.classes[0]||'';localStorage.setItem(STORE,JSON.stringify(data));renderView();renderEditor();renderClasses();setSyncStatus('Connected • Data downloaded',true);toast('Cloud data synced')}
+  else await pushCloudData();
+ }catch(err){setSyncStatus('Sync error: '+err.message);toast('Sync failed')}
+}
+function subscribeRealtime(){
+ if(!supabaseClient)return;
+ if(realtimeChannel)supabaseClient.removeChannel(realtimeChannel);
+ realtimeChannel=supabaseClient.channel('routine-data-live')
+  .on('postgres_changes',{event:'UPDATE',schema:'public',table:'tuition_routine_data',filter:'id=eq.main'},payload=>{
+   if(cloudBusy)return;
+   const incoming=payload.new?.payload;
+   if(incoming&&Array.isArray(incoming.classes)&&incoming.routines){
+    data=incoming;selectedClass=data.classes[0]||'';localStorage.setItem(STORE,JSON.stringify(data));
+    renderView();renderEditor();renderClasses();
+    setSyncStatus('Connected • Updated from another device',true);
+   }
+  }).subscribe();
+}
+function disconnectSupabase(){
+ if(supabaseClient&&realtimeChannel)supabaseClient.removeChannel(realtimeChannel);
+ supabaseClient=null;realtimeChannel=null;localStorage.removeItem(SUPABASE_CONFIG_KEY);
+ document.getElementById('supabaseKey').value='';
+ setSyncStatus('Disconnected • Local save only');
+ toast('Supabase disconnected');
+}
+document.getElementById('connectSupabase').onclick=connectSupabase;
+document.getElementById('syncSupabase').onclick=syncCloudNow;
+document.getElementById('disconnectSupabase').onclick=disconnectSupabase;
+document.getElementById('copySupabaseSql').onclick=async()=>{
+ const sql=document.getElementById('supabaseSql').value;
+ try{await navigator.clipboard.writeText(sql);toast('SQL copied')}catch(e){document.getElementById('supabaseSql').select();document.execCommand('copy');toast('SQL copied')}
+};
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2100)}
+function periods(cls){return data.routines[cls]||[]}
+function setPage(page){['view','edit','classes','supabase'].forEach(p=>document.getElementById(p+'Page').classList.toggle('hidden',p!==page));document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===page));if(page==='edit')renderEditor();if(page==='classes')renderClasses();if(page==='view')renderView();if(page==='supabase')loadSupabaseSettings();document.getElementById('sidebar').classList.add('closed')}
+document.getElementById('menuToggle').onclick=()=>document.getElementById('sidebar').classList.toggle('closed');
+document.addEventListener('click',e=>{
+ const sidebar=document.getElementById('sidebar');
+ const menuButton=document.getElementById('menuToggle');
+ if(!sidebar.classList.contains('closed')&&!sidebar.contains(e.target)&&!menuButton.contains(e.target)){
+  sidebar.classList.add('closed');
+ }
+});
+document.querySelectorAll('.nav-btn').forEach(b=>b.onclick=()=>setPage(b.dataset.page));
+document.getElementById('goEdit').onclick=()=>setPage('edit');document.getElementById('backView').onclick=()=>setPage('view');
+function renderView(){const grid=document.getElementById('classGrid');grid.innerHTML='';data.classes.forEach(c=>{const b=document.createElement('button');b.className='class-card'+(c===selectedClass?' selected':'');b.innerHTML=`<strong>${esc(c)}</strong><small>${periods(c).length} days scheduled</small>`;b.onclick=()=>{selectedClass=c;renderView()};grid.appendChild(b)});document.getElementById('classCount').textContent=data.classes.length+' classes';document.getElementById('routineTitle').textContent=selectedClass||'Select a class';document.getElementById('routineMeta').textContent=selectedClass?'Weekly tuition routine':'';
+const target=document.getElementById('routineContent');if(!selectedClass){target.innerHTML='<div class="empty"><b>No classes available</b>Add a class from Manage classes to get started.</div>';return}
+const list=periods(selectedClass);if(!list.length){target.innerHTML='<div class="empty"><b>No routine added yet</b>Use Edit routine from the menu to add days and subjects.</div>';return}
+const ordered=[...list].sort((a,b)=>DAYS.indexOf(a.day)-DAYS.indexOf(b.day));
+const subjectList=p=>(p.subjects||p.subject||'').split('|').map(s=>s.trim()).filter(Boolean);
+const maxSubjects=Math.max(1,...ordered.map(p=>subjectList(p).length));
+let html='<div class="routine-wrap"><table class="routine routine-simple routine-columns"><thead><tr><th>দিন (DAY)</th>';
+for(let i=0;i<maxSubjects;i++) html+=`<th>বিষয় ${i+1}</th>`;
+html+='</tr></thead><tbody>';
+const todayIndex=(new Date().getDay()+6)%7;
+const todayName=DAYS[todayIndex];
+ordered.forEach(p=>{
+ const subjects=subjectList(p);
+ const off=p.kind==='off'||(p.subject||'').trim()==='টিউশন ছুটি';
+ const isToday=p.day===todayName;
+ html+=`<tr class="${isToday?'today-row':''}"><td>${esc(p.day)}${isToday?'<span class="today-label">আজ</span>':''}</td>`;
+ if(off) html+=`<td class="tuition-off" colspan="${maxSubjects}"><strong>টিউশন ছুটি</strong></td>`;
+ else {
+  for(let i=0;i<maxSubjects;i++) html+=`<td>${subjects[i]?`<span class="subject-chip">${esc(subjects[i])}</span>`:''}</td>`;
+ }
+ html+='</tr>';
+});
+html+='</tbody></table></div>';target.innerHTML=html}
+function renderEditor(){const sel=document.getElementById('editClass');sel.innerHTML=data.classes.map(c=>`<option ${c===selectedClass?'selected':''} value="${esc(c)}">${esc(c)}</option>`).join('');if(!data.classes.includes(selectedClass))selectedClass=data.classes[0]||'';sel.value=selectedClass;renderPeriodList()}
+document.getElementById('editClass').onchange=e=>{selectedClass=e.target.value;clearForm();renderPeriodList();renderView()};
+function renderPeriodList(){const arr=[...periods(selectedClass)].sort((a,b)=>DAYS.indexOf(a.day)-DAYS.indexOf(b.day));document.getElementById('periodCount').textContent=arr.length+' days';const box=document.getElementById('periodList');if(!arr.length){box.innerHTML='<div class="empty">No routine added for this class yet.</div>';return}box.innerHTML=arr.map(p=>`<div class="entry"><strong>${esc(p.day)} · ${esc(p.subjects||p.subject)}</strong><button class="btn light" onclick="editPeriod('${p.id}')">Edit</button><button class="btn danger" onclick="deletePeriod('${p.id}')">Delete</button></div>`).join('')}
+let chosenSubjects=[];
+function renderChosenSubjects(){const box=document.getElementById('selectedSubjects');box.innerHTML=chosenSubjects.length?chosenSubjects.map((s,i)=>`<span class="selected-subject">${esc(s)} <button type="button" aria-label="Remove ${esc(s)}" onclick="removeChosenSubject(${i})">×</button></span>`).join(''):'<span class="muted">এখনও কোনো বিষয় যোগ করা হয়নি</span>'}
+window.removeChosenSubject=i=>{chosenSubjects.splice(i,1);renderChosenSubjects()};
+document.getElementById('subjectSelect').onchange=e=>document.getElementById('customSubject').classList.toggle('hidden',e.target.value!=='__custom');
+document.getElementById('addSubject').onclick=()=>{const sel=document.getElementById('subjectSelect');let value=sel.value==='__custom'?document.getElementById('customSubject').value.trim():sel.value;if(!value)return toast('একটি বিষয় নির্বাচন করুন');if(chosenSubjects.includes(value))return toast('বিষয়টি আগে থেকেই যোগ করা আছে');chosenSubjects.push(value);sel.value='';document.getElementById('customSubject').value='';document.getElementById('customSubject').classList.add('hidden');renderChosenSubjects()};
+document.getElementById('holidayToggle').onchange=e=>{const on=e.target.checked;document.getElementById('subjectSelect').disabled=on;document.getElementById('addSubject').disabled=on;document.getElementById('customSubject').disabled=on;if(on){chosenSubjects=[];renderChosenSubjects()}};
+function clearForm(){document.getElementById('periodForm').reset();document.getElementById('periodId').value='';document.getElementById('editorTitle').textContent='Add routine';chosenSubjects=[];document.getElementById('subjectSelect').disabled=false;document.getElementById('addSubject').disabled=false;document.getElementById('customSubject').disabled=false;document.getElementById('customSubject').classList.add('hidden');renderChosenSubjects()}
+document.getElementById('cancelEdit').onclick=clearForm;
+document.getElementById('periodForm').onsubmit=e=>{e.preventDefault();if(!selectedClass)return toast('Please add a class first');const id=document.getElementById('periodId').value;const isHoliday=document.getElementById('holidayToggle').checked;if(!isHoliday&&!chosenSubjects.length)return toast('অন্তত একটি বিষয় যোগ করুন');const p={id:id||String(Date.now()),day:document.getElementById('day').value,subject:isHoliday?'টিউশন ছুটি':chosenSubjects.join(' | '),kind:isHoliday?'off':'class'};let arr=periods(selectedClass);if(arr.some(x=>x.id!==id&&x.day===p.day)){if(!confirm('এই দিনে আগে থেকেই রুটিন আছে। পরিবর্তন করবেন?'))return;arr=arr.filter(x=>x.day!==p.day)}if(id)arr=arr.map(x=>x.id===id?p:x);else arr.push(p);data.routines[selectedClass]=arr;save();clearForm();renderPeriodList();renderView();toast('Routine saved successfully')};
+window.editPeriod=id=>{const p=periods(selectedClass).find(x=>x.id===id);if(!p)return;clearForm();document.getElementById('periodId').value=p.id;document.getElementById('day').value=p.day;const isOff=p.kind==='off'||(p.subject||'').trim()==='টিউশন ছুটি';document.getElementById('holidayToggle').checked=isOff;if(isOff){document.getElementById('subjectSelect').disabled=true;document.getElementById('addSubject').disabled=true}else{chosenSubjects=(p.subjects||p.subject||'').split('|').map(s=>s.trim()).filter(Boolean);renderChosenSubjects()}document.getElementById('editorTitle').textContent='Edit routine';window.scrollTo({top:0,behavior:'smooth'})};
+window.deletePeriod=id=>{if(!confirm('Delete this day from the routine?'))return;data.routines[selectedClass]=periods(selectedClass).filter(p=>p.id!==id);save();renderPeriodList();renderView();toast('Routine deleted')};
+function renderClasses(){document.getElementById('manageClassCount').textContent=data.classes.length+' classes';document.getElementById('manageClassList').innerHTML=data.classes.map(c=>`<div class="entry"><strong>${esc(c)}</strong><small>${periods(c).length} periods</small><button class="btn danger" onclick="askDelete('${encodeURIComponent(c)}')">Delete</button></div>`).join('')||'<div class="empty">No classes added.</div>'}
+document.getElementById('classForm').onsubmit=e=>{e.preventDefault();const c=document.getElementById('newClass').value.trim();if(!c)return;if(data.classes.some(x=>x.toLowerCase()===c.toLowerCase()))return toast('This class already exists');data.classes.push(c);data.routines[c]=[];selectedClass=c;save();e.target.reset();renderClasses();renderView();toast('Class added')};
+window.askDelete=c=>{pendingDelete=decodeURIComponent(c);document.getElementById('confirmModal').classList.remove('hidden')};
+function closeModal(){document.getElementById('confirmModal').classList.add('hidden')}
+document.getElementById('modalClose').onclick=document.getElementById('modalCancel').onclick=closeModal;
+document.getElementById('modalDelete').onclick=()=>{data.classes=data.classes.filter(c=>c!==pendingDelete);delete data.routines[pendingDelete];if(selectedClass===pendingDelete)selectedClass=data.classes[0]||'';save();closeModal();renderClasses();renderView();toast('Class deleted')};
+document.getElementById('printBtn').onclick=()=>{if(!selectedClass)return toast('Select a class first');window.print()};
+renderView();document.getElementById('sidebar').classList.add('closed');
+try{
+ const savedCfg=JSON.parse(localStorage.getItem(SUPABASE_CONFIG_KEY)||'null');
+ if(savedCfg?.url&&savedCfg?.key){
+  document.getElementById('supabaseUrl').value=savedCfg.url;
+  document.getElementById('supabaseKey').value=savedCfg.key;
+  connectSupabase();
+ }
+}catch(e){}
+</script>
+</body>
+</html>
